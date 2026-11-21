@@ -53,7 +53,7 @@ export function render(app) {
     if (b.id === 'export') {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([exportJson(app.state)], { type: 'application/json' }));
-      a.download = `speaknova-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `speaksiri-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
     }
     if (b.id === 'reset' && confirm('Xóa toàn bộ tiến độ? Không thể hoàn tác.')) { app.state = defaultState(); app.save(); app.go('/onboarding'); }

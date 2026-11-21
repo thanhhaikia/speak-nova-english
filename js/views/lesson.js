@@ -23,7 +23,7 @@ export function render(app, [id]) {
 
   const intro = () => {
     root.innerHTML = header() + html`<div class="card tutor"><div class="tutor-av">🧑‍🏫</div><div>
-      <b>${raw(tutorText(app, 'Gia sư SpeakNova', 'SpeakNova tutor'))}</b>
+      <b>${raw(tutorText(app, 'Gia sư SpeakSiri', 'SpeakSiri tutor'))}</b>
       ${lesson.intro ? h`<p>${raw(tutorText(app, lesson.intro.vi, lesson.intro.en))}</p>` : h`<p>${raw(tutorText(app, `Bài này luyện ${items.length} bài tập: ${lesson.words.length} từ vựng, ${lesson.sentences.length} câu và 1 đoạn văn về chủ đề "${lesson.vi}". Nghe mẫu 🔊, sau đó bấm 🎙️ và đọc to.`, `This lesson has ${items.length} exercises about "${lesson.title}". Listen first, then press the mic and read aloud.`))}</p>`}
       ${lesson.prompt ? h`<p class="prompt"><b>IELTS Part ${lesson.prompt.part}:</b> ${lesson.prompt.q}<br><small class="muted">${lesson.prompt.vi}</small> — <a href="#/analyzer?q=${encodeURIComponent(lesson.prompt.q)}">trả lời tự do trong Phân tích giọng nói</a></p>` : ''}
       </div></div>

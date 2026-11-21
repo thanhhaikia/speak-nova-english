@@ -1,4 +1,4 @@
-# SpeakNova English 🗣️
+# SpeakSiri English 🗣️
 
 Ứng dụng web luyện **nói & phát âm tiếng Anh cho người Việt**, lấy cảm hứng từ [ELSA Speak Nova](https://vn.elsaspeak.com/nova/).
 Giao diện tiếng Việt, mobile-first, chạy **hoàn toàn trên trình duyệt**: không backend, không API key — chỉ dùng Web Speech API
