@@ -15,7 +15,8 @@ export function tutorText(app, vi, en) {
 
 export function voiceOpts(app, extra = {}) {
   const s = app.state.settings;
-  return { accent: s.accent, gender: s.gender, rate: s.rate, voiceName: s.voices?.[`${s.accent}-${s.gender}`] || null, ...extra };
+  const accent = extra.accent || s.accent, gender = extra.gender || s.gender;
+  return { rate: s.rate, ...extra, accent, gender, voiceName: extra.voiceName || s.voices?.[`${accent}-${gender}`] || null };
 }
 
 export const accentLabel = (s) => `${s.accent === 'en-GB' ? '🇬🇧 UK' : '🇺🇸 US'} · ${s.gender === 'male' ? 'Nam' : 'Nữ'}`;
