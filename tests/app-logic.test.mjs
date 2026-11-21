@@ -83,3 +83,14 @@ test('store records attempts, lessons and achievements, and persists', () => {
   save(st);
   assert.equal(load().xp, st.xp);
 });
+
+test('importJson rejects malformed backups and merges nested defaults', async () => {
+  const { importJson } = await import('../js/store.js');
+  assert.throws(() => importJson('{"xp":0,"settings":null}'));
+  assert.throws(() => importJson('{"xp":"5"}'));
+  assert.throws(() => importJson('[1]'));
+  const s = importJson('{"xp":12,"settings":{"accent":"en-GB"}}');
+  assert.equal(s.settings.accent, 'en-GB');
+  assert.equal(s.settings.tutor, 'vi');
+  assert.deepEqual(s.attempts, []);
+});

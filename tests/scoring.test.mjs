@@ -69,3 +69,11 @@ test('level bands and history estimate', () => {
   const est = estimateFromHistory([{ overall: 80, type: 'sentence' }, { overall: 70, type: 'paragraph' }, { overall: 100, type: 'word' }]);
   assert.equal(est.cefr, 'B2');
 });
+
+test('contracted homophones match their one-word forms', () => {
+  for (const [target, heard] of [['Is this your bag?', "is this you're bag"], ['Their car is red.', "they're car is red"], ["It's late.", 'its late']]) {
+    const c = compareText(target, heard);
+    assert.ok(c.words.every((w) => w.status === 'correct'), `${target} / ${heard}`);
+    assert.deepEqual(c.extras, []);
+  }
+});
