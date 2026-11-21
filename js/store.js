@@ -99,6 +99,14 @@ export function checkAchievements(state, ctx) {
 export function exportJson(state) { return JSON.stringify(state, null, 2); }
 export function importJson(text) {
   const s = JSON.parse(text);
-  if (!s || typeof s !== 'object' || !('xp' in s)) throw new Error('invalid');
-  return { ...defaultState(), ...s };
+  if (!s || typeof s !== 'object' || Array.isArray(s) || typeof s.xp !== 'number') throw new Error('invalid');
+  const d = defaultState();
+  const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
+  const out = { ...d, ...s };
+  for (const k of Object.keys(d)) {
+    if (d[k] === null || s[k] === undefined) continue;
+    if (Array.isArray(d[k]) ? !Array.isArray(s[k]) : isObj(d[k]) ? !isObj(s[k]) : typeof s[k] !== typeof d[k]) throw new Error(`invalid ${k}`);
+    if (isObj(d[k])) out[k] = { ...d[k], ...s[k] };
+  }
+  return out;
 }

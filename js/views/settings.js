@@ -65,7 +65,8 @@ export function render(app) {
     const s = app.state.settings;
     if (e.target.id === 'voice') { s.voices = { ...s.voices, [`${s.accent}-${s.gender}`]: e.target.value || null }; app.save(); }
     if (e.target.id === 'import' && e.target.files[0]) {
-      try { app.state = importJson(await e.target.files[0].text()); app.save(); toast('✅ Đã nhập dữ liệu', 'info'); draw(); } catch { toast('❌ File không hợp lệ', 'warn'); }
+      const prev = app.state;
+      try { app.state = importJson(await e.target.files[0].text()); app.save(); toast('✅ Đã nhập dữ liệu', 'info'); draw(); } catch { app.state = prev; app.save(); toast('❌ File không hợp lệ', 'warn'); }
     }
   });
   document.addEventListener('voices', () => root.isConnected && draw());
