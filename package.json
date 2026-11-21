@@ -1,7 +1,7 @@
 {
   "name": "speak-nova-english",
   "version": "1.0.0",
-  "description": "SpeakNova — luyện nói & phát âm tiếng Anh cho người Việt (kiểu ELSA Speak) chạy hoàn toàn trên trình duyệt bằng Web Speech API.",
+  "description": "SpeakSiri — luyện nói & phát âm tiếng Anh cho người Việt (kiểu ELSA Speak) chạy hoàn toàn trên trình duyệt bằng Web Speech API.",
   "private": true,
   "type": "module",
   "scripts": {

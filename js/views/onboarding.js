@@ -12,7 +12,7 @@ export function render(app) {
   app.main.appendChild(root);
 
   const steps = [
-    () => html`<div class="ob-hero"><div class="logo-big">🗣️</div><h1>Chào mừng đến với <span class="brand">SpeakNova</span></h1>
+    () => html`<div class="ob-hero"><div class="logo-big">🗣️</div><h1>Chào mừng đến với <span class="brand">SpeakSiri</span></h1>
       <p class="muted">Huấn luyện viên phát âm tiếng Anh cho người Việt — luyện nói, nhận phản hồi tức thì, ngay trên trình duyệt.</p></div>
       <label class="field"><span>Bạn tên là gì? (tùy chọn)</span><input id="ob-name" maxlength="30" value="${ans.name}" placeholder="VD: Lan"></label>
       <button class="btn primary block" data-next>Bắt đầu khảo sát →</button>`,
