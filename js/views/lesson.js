@@ -32,7 +32,8 @@ export function render(app, [id]) {
   };
 
   const exercise = () => {
-    const item = items[idx];
+    const at = idx;
+    const item = items[at];
     root.innerHTML = header();
     const vs = voiceSwitch(app, () => card.refreshVoice());
     root.appendChild(vs);
@@ -40,9 +41,9 @@ export function render(app, [id]) {
       autoplay: true,
       onResult: (r) => {
         const xp = recordAttempt(app.state, r, { lesson: lesson.id });
-        if (!best[idx] || r.overall > best[idx].overall) best[idx] = r;
+        if (!best[at] || r.overall > best[at].overall) best[at] = r;
         app.reward(xp);
-        nav.querySelector('[data-next]').textContent = idx === items.length - 1 ? 'Xem kết quả 🏁' : 'Tiếp theo →';
+        nav.querySelector('[data-next]').textContent = at === items.length - 1 ? 'Xem kết quả 🏁' : 'Tiếp theo →';
         nav.querySelector('[data-next]').classList.add('primary');
       },
     });
