@@ -35,7 +35,7 @@ export function render(app, _p, query) {
     const s = e.target.closest('[data-say]');
     if (s) return speak(s.dataset.say, voiceOpts(app, { accent: s.dataset.acc }));
     const r = e.target.closest('[data-rec]');
-    if (r) {
+    if (r && r.dataset.rec && !r.closest('#practice')) {
       const card = speakCard(app, { type: 'word', text: r.dataset.rec }, { autoplay: true, onResult: (rep) => { app.reward(recordAttempt(app.state, rep)); draw(); } });
       const box = root.querySelector('#practice');
       box.replaceChildren(card);
