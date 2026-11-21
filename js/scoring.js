@@ -42,10 +42,10 @@ const VARIANTS = {
 
 // Words a speech recogniser cannot tell apart; saying one counts as saying the other.
 const HOMOPHONES = [
-  ['to', 'two', 'too'], ['there', 'their', 'theyre'], ['right', 'write'], ['see', 'sea'], ['for', 'four'], ['by', 'buy', 'bye'], ['hear', 'here'],
+  ['to', 'two', 'too'], ['there', 'their', 'they are'], ['right', 'write'], ['see', 'sea'], ['for', 'four'], ['by', 'buy', 'bye'], ['hear', 'here'],
   ['know', 'no'], ['new', 'knew'], ['one', 'won'], ['ate', 'eight'], ['week', 'weak'], ['meet', 'meat'], ['whole', 'hole'], ['son', 'sun'],
   ['mail', 'male'], ['pair', 'pear'], ['peace', 'piece'], ['plane', 'plain'], ['sale', 'sail'], ['wait', 'weight'], ['wear', 'where'],
-  ['which', 'witch'], ['would', 'wood'], ['your', 'youre'], ['its', 'it is'], ['road', 'rode'], ['flour', 'flower'], ['our', 'hour'],
+  ['which', 'witch'], ['would', 'wood'], ['your', 'you are'], ['its', 'it is'], ['road', 'rode'], ['flour', 'flower'], ['our', 'hour'],
   ['allowed', 'aloud'], ['break', 'brake'], ['cell', 'sell'], ['sent', 'cent', 'scent'], ['seen', 'scene'], ['steal', 'steel'], ['tail', 'tale'],
   ['through', 'threw'], ['weather', 'whether'], ['red', 'read'], ['lead', 'led'], ['in', 'inn'], ['be', 'bee'], ['so', 'sew'], ['blue', 'blew'],
   ['eye', 'i'], ['oh', 'o'], ['okay', 'k'], ['mister', 'mr'], ['grey', 'gray'],
@@ -122,16 +122,30 @@ const CLOSE = 0.6;
 export function alignTokens(target, heard) {
   const m = target.length, n = heard.length;
   const subCost = (a, b) => (equivalent(a, b) ? 0 : 1.5 * (1 - similarity(a, b)) + 0.1);
+  // A contraction is expanded to two tokens, so "your" ↔ "you're" (→ "you are") is a 1:2 homophone match.
+  const joinHeard = (i, j) => equivalent(target[i - 1], `${heard[j - 2]} ${heard[j - 1]}`);
+  const joinTarget = (i, j) => equivalent(`${target[i - 2]} ${target[i - 1]}`, heard[j - 1]);
   const D = Array.from({ length: m + 1 }, () => new Float64Array(n + 1));
   for (let i = 1; i <= m; i++) D[i][0] = i;
   for (let j = 1; j <= n; j++) D[0][j] = j;
   for (let i = 1; i <= m; i++)
-    for (let j = 1; j <= n; j++) D[i][j] = Math.min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + subCost(target[i - 1], heard[j - 1]));
+    for (let j = 1; j <= n; j++) {
+      D[i][j] = Math.min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + subCost(target[i - 1], heard[j - 1]));
+      if (j > 1 && joinHeard(i, j)) D[i][j] = Math.min(D[i][j], D[i - 1][j - 2]);
+      if (i > 1 && joinTarget(i, j)) D[i][j] = Math.min(D[i][j], D[i - 2][j - 1]);
+    }
   const res = new Array(m);
   const extras = [];
   let i = m, j = n;
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && Math.abs(D[i][j] - (D[i - 1][j - 1] + subCost(target[i - 1], heard[j - 1]))) < 1e-9) {
+    if (i > 0 && j > 1 && joinHeard(i, j) && D[i][j] === D[i - 1][j - 2]) {
+      res[i - 1] = { status: 'correct', heard: `${heard[j - 2]} ${heard[j - 1]}` };
+      i--; j -= 2;
+    } else if (i > 1 && j > 0 && joinTarget(i, j) && D[i][j] === D[i - 2][j - 1]) {
+      res[i - 2] = { status: 'correct', heard: heard[j - 1] };
+      res[i - 1] = { status: 'correct', heard: '' };
+      i -= 2; j--;
+    } else if (i > 0 && j > 0 && Math.abs(D[i][j] - (D[i - 1][j - 1] + subCost(target[i - 1], heard[j - 1]))) < 1e-9) {
       const t = target[i - 1], h = heard[j - 1];
       const status = equivalent(t, h) ? 'correct' : similarity(t, h) >= CLOSE ? 'close' : 'wrong';
       res[i - 1] = { status, heard: h };
